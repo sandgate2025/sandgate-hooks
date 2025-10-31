@@ -3,22 +3,19 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>メンズ美容室フック生成器 Pro｜Swipe File Generator</title>
+<title>SANDGATE フック生成器 Pro+｜メンズ美容室（福井）</title>
+<meta name="description" content="福井市・SANDGATE サンドゲート向けのショート動画フック生成器。スクロール停止・心理トリガー・CTA・縦長サムネ文言を自動生成。" />
 <style>
-  :root {
-    --bg: #0f1115; --panel:#171a21; --ink:#e8ecf1; --muted:#a6b0c0; --accent:#59d; --accent-2:#9d5;
-    --ok:#3bb273; --danger:#e25; --border:#242936; --chip:#242a36; --radius:12px; --radius-sm:8px; --shadow:0 10px 30px rgba(0,0,0,.35);
-    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-  }
-  *{box-sizing:border-box} html,body{height:100%}
-  body{margin:0;font-family:"Inter",system-ui,-apple-system,"Noto Sans JP",sans-serif;background:
+  :root{--bg:#0f1115;--panel:#171a21;--ink:#e8ecf1;--muted:#a6b0c0;--accent:#59d;--accent2:#9d5;--ok:#3bb273;--danger:#e25;--border:#242936;--chip:#242a36;--radius:12px;--radius-sm:8px;--shadow:0 10px 30px rgba(0,0,0,.35);--mono:ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}html,body{height:100%}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,"Noto Sans JP",sans-serif;background:
     radial-gradient(1200px 800px at 80% -20%, rgba(89,157,221,.12), transparent 60%),
     radial-gradient(800px 600px at -10% 110%, rgba(157,221,85,.12), transparent 60%),
     var(--bg);color:var(--ink);line-height:1.6}
   header{position:sticky;top:0;z-index:10;backdrop-filter:blur(6px);background:linear-gradient(180deg, rgba(15,17,21,.9), rgba(15,17,21,.65));border-bottom:1px solid var(--border)}
   .wrap{max-width:1120px;margin:0 auto;padding:20px}
   .title{display:flex;align-items:center;gap:12px}
-  .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:inset 0 0 0 2px rgba(255,255,255,.12)}
+  .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:inset 0 0 0 2px rgba(255,255,255,.12)}
   h1{font-size:22px;margin:0}
   main{padding:32px 0 60px}
   .grid{display:grid;gap:18px;grid-template-columns:1.2fr .8fr}
@@ -49,9 +46,9 @@
   .result-grid{display:grid;gap:14px;grid-template-columns:1fr 1fr}
   @media (max-width:980px){.result-grid{grid-template-columns:1fr}}
   .card{border:1px solid var(--border);border-radius:var(--radius);background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));padding:16px;box-shadow:var(--shadow)}
-  .card .meta{font-size:12px;color:var(--muted);display:flex;gap:10px}
+  .card .meta{font-size:12px;color:var(--muted);display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
   .card p{margin:10px 0 0;white-space:pre-wrap}
-  .badge{display:inline-block;font-size:11px;color:#111;background:var(--accent-2);padding:3px 8px;border-radius:999px;font-weight:700;letter-spacing:.02em}
+  .badge{display:inline-block;font-size:11px;color:#111;background:var(--accent2);padding:3px 8px;border-radius:999px;font-weight:700;letter-spacing:.02em}
   .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
   .toolbar .left{display:flex;align-items:center;gap:10px}
   .toolbar .right{display:flex;align-items:center;gap:8px}
@@ -61,13 +58,15 @@
   .small{font-size:12px;color:var(--muted)}
   .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .toggle{display:flex;gap:8px;align-items:center}
+  .thumb{font-family:var(--mono);font-size:12px;background:#10141c;border:1px dashed var(--border);padding:6px 8px;border-radius:8px;display:inline-flex;gap:8px;align-items:center}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:var(--chip);font-size:11px;color:var(--muted)}
 </style>
 </head>
 <body>
   <header>
     <div class="wrap title">
       <div class="logo" aria-hidden="true"></div>
-      <h1>メンズ美容室フック生成器 <span class="small">Pro</span></h1>
+      <h1>SANDGATE フック生成器 <span class="small">Pro+</span></h1>
     </div>
   </header>
 
@@ -86,7 +85,7 @@
             <div>
               <label>主な悩み / 制約</label>
               <select id="pain">
-                <option>セットが決まらない</option><option>似合う髪型がわからない</option><option>うねり・ボリューム</option><option>朝の時短</option><option>校則・職場の規定</option><option>薄毛・生え際</option>
+                <option>セットが決まらない</option><option>似合う髪型がわからない</option><option>うねり・ボリューム</option><option>朝の時短</option><option>校則・職場の規定</option><option selected>薄毛・生え際</option>
               </select>
             </div>
           </div>
@@ -105,15 +104,15 @@
               </select>
             </div>
             <div>
-              <label>地域・店名（初期値カスタム可）</label>
-              <input id="brand" type="text" value="福井・理容カルソル 二の宮店" />
+              <label>地域・店名（初期値固定）</label>
+              <input id="brand" type="text" value="福井市・SANDGATE サンドゲート" />
             </div>
           </div>
 
           <div class="row">
             <div>
               <label>予約URL（任意）</label>
-              <input id="bookUrl" type="url" placeholder="https://example.com/reserve" />
+              <input id="bookUrl" type="url" placeholder="https://sand-gate.jp/reserve" />
               <div class="inline">
                 <label class="toggle"><input id="autoUrl" type="checkbox" checked /> CTAに予約URLを自動付与</label>
               </div>
@@ -131,14 +130,21 @@
 
           <div class="row">
             <div>
-              <label>追加キーワード（任意 / カンマ区切り）</label>
-              <input id="keywords" type="text" placeholder="清潔感, 第一印象, マッシュ, ツイストスパイラル" />
-              <div class="note">※ 出力内へ自然に差し込みます</div>
+              <label>ハッシュタグ（固定＋自動）</label>
+              <input id="extraTags" type="text" placeholder="任意：追加タグ（カンマ区切り）" />
+              <div class="inline">
+                <label class="toggle"><input id="autoTag" type="checkbox" checked /> 自動でタグを付与</label>
+                <span class="pill">固定：#福井メンズ美容室 #SANDGATE #サンドゲート</span>
+                <span class="pill">得意：フェード</span>
+              </div>
+              <div class="note">自動タグはフェード関連と地域タグを状況に合わせて付与します。</div>
             </div>
             <div>
-              <label>出力件数</label>
-              <select id="count">
-                <option>5</option><option selected>10</option><option>15</option>
+              <label>縦長サムネ文言（長さ）</label>
+              <select id="thumbLen">
+                <option value="8">極短（〜8字）</option>
+                <option value="12" selected>短め（〜12字）</option>
+                <option value="16">やや長め（〜16字）</option>
               </select>
             </div>
           </div>
@@ -150,14 +156,14 @@
             <button class="btn ghost" id="shuffle">シャッフル</button>
             <button class="btn danger" id="clear">クリア</button>
           </div>
-          <div class="note">1行目・字幕・サムネ文言・本文導入に活用。<span class="kbd">⌘/Ctrl + C</span> または各カードの「コピー」で素早く運用。</div>
+          <div class="note">カードの「コピー」で本文、サムネ行は個別にコピーできます。</div>
         </div>
       </section>
 
       <section class="panel">
         <div class="panel-inner">
           <div class="toolbar">
-            <div class="left"><span class="badge">RESULT</span><span class="small">スワイプファイル</span></div>
+            <div class="left"><span class="badge">RESULT</span><span class="small">スワイプファイル＋サムネ文言</span></div>
             <div class="right"><button class="btn ok" id="copyAll">全部コピー</button></div>
           </div>
           <div id="results" class="result-grid" aria-live="polite"></div>
@@ -166,30 +172,41 @@
     </div>
   </main>
 
-  <footer class="wrap small">© 2025 Swipe File Generator for Men's Barbershop｜カスタムOK（店名固定・URL自動付与・長さプリセット）</footer>
+  <footer class="wrap small">© 2025 SANDGATE Swipe File Generator｜#福井メンズ美容室 #SANDGATE #サンドゲート</footer>
 
 <script>
 (function(){
-  const $ = (q) => document.querySelector(q);
+  const $ = (q)=>document.querySelector(q);
   const results = $('#results');
-  const target = $('#target'), pain = $('#pain'), tone = $('#tone'), cta = $('#cta');
-  const brand = $('#brand'), keywords = $('#keywords'), count = $('#count');
-  const bookUrl = $('#bookUrl'), autoUrl = $('#autoUrl'), lengthSel = $('#length');
-  const btnGen = $('#gen'), btnClear = $('#clear'), btnShuffle = $('#shuffle'), btnCopyAll = $('#copyAll');
-  const chipsWrap = $('#patterns');
+  const target=$('#target'), pain=$('#pain'), tone=$('#tone'), cta=$('#cta');
+  const brand=$('#brand'), keywords=$('#keywords'), count=$('#count');
+  const bookUrl=$('#bookUrl'), autoUrl=$('#autoUrl'), lengthSel=$('#length');
+  const extraTags=$('#extraTags'), autoTag=$('#autoTag'), thumbLenSel=$('#thumbLen');
+  const btnGen=$('#gen'), btnClear=$('#clear'), btnShuffle=$('#shuffle'), btnCopyAll=$('#copyAll');
+  const chipsWrap=$('#patterns');
 
-  const rand = (arr) => arr[Math.floor(Math.random()*arr.length)];
-  const toArray = (s) => (s||"").split(",").map(t=>t.trim()).filter(Boolean);
+  // Controls not present (keywords/count) fallback
+  if(!keywords){ const k=document.createElement('input'); k.id='keywords'; k.type='hidden'; k.value='清潔感, 第一印象, フェード'; document.body.appendChild(k); }
+  if(!count){ const c=document.createElement('select'); c.id='count'; c.innerHTML='<option>10</option>'; document.body.appendChild(c); }
+
+  const rand = (arr)=>arr[Math.floor(Math.random()*arr.length)];
+  const toArray = (s)=> (s||"").split(",").map(t=>t.trim()).filter(Boolean);
 
   const CTA = {
-    "予約する": ["今すぐ予約", "カットはここから", "席が埋まる前に予約"],
-    "保存する": ["あとで見返せるよう保存", "保存して次回オーダー", "保存→担当に見せて"],
-    "DMする": ["DMで相談", "匿名で相談OK", "希望をDMで送って"],
-    "いいねする": ["いいねで応援", "参考になったら👍", "続編希望はいいね"],
-    "コメントする": ["悩みをコメント", "どっち派かコメントで", "質問はコメントで"]
+    "予約する":["今すぐ予約","カットはここから","席が埋まる前に予約"],
+    "保存する":["あとで見返せるよう保存","保存して次回オーダー","保存→担当に見せて"],
+    "DMする":["DMで相談","匿名で相談OK","希望をDMで送って"],
+    "いいねする":["いいねで応援","参考になったら👍","続編希望はいいね"],
+    "コメントする":["悩みをコメント","どっち派かコメントで","質問はコメントで"]
   };
 
   const VISUAL = ["（数秒の静止）","【先に謝ります】","＼写真は同一人物／","▼ ここだけの話","※ 注意：見たら戻れません"];
+
+  // Hashtag pools (fixed + smart)
+  const FIXED_TAGS = ["#福井メンズ美容室","#SANDGATE","#サンドゲート"];
+  const LOCAL_TAGS = ["#福井","#福井市","#福井市美容室","#福井理容室"];
+  const FADE_TAGS  = ["#フェードスタイル","#フェードカット","#スキンフェード","#ミッドフェード","#ローフェード","#ハイフェード","#バーバースタイル","#メンズカット","#メンズヘア"];
+  const GENERAL_TAGS=["#清潔感","#第一印象","#就活ヘア","#ビジネスヘア","#大人男子","#メンズセット"];
 
   const PATTERNS = [
     { id:"共感×逆転",  text:({t,p,b,k})=>`「美容室で“いつも通りで”って言ったら、いつも通りじゃなかった話。」\n${t}の${p}に刺さる、${b}の実例で解説。${k}` },
@@ -223,7 +240,6 @@
   function attachURL(text){
     const url = bookUrl.value.trim();
     if(!url || !autoUrl.checked) return text;
-    // CTA行を探して URL を付与（なければ末尾に）
     const lines = text.split("\n");
     let placed=false;
     for(let i=lines.length-1;i>=0;i--){
@@ -236,25 +252,53 @@
     return lines.join("\n");
   }
 
+  function pickTags(){
+    const ext = toArray(extraTags?.value||"").map(t=> t.startsWith("#")?t:("#"+t));
+    const smart = [
+      rand(LOCAL_TAGS), rand(FADE_TAGS), rand(FADE_TAGS), rand(GENERAL_TAGS)
+    ].filter(Boolean);
+    const uniq = Array.from(new Set([...FIXED_TAGS, ...smart, ...ext]));
+    return uniq.join(" ");
+  }
+
+  function attachTags(text){
+    if(!autoTag.checked) return text;
+    const tags = pickTags();
+    return text + "\n" + tags;
+  }
+
   function limitLength(text, limit){
     if(!limit || limit<=0) return text;
-    // 単純カウント（絵文字も1文字として扱う）。句読点で綺麗に切る努力。
     if(text.length <= limit) return text;
     const cut = text.slice(0, limit - 1);
-    // 直近の句点・改行で切り戻す
     const lastBreak = Math.max(cut.lastIndexOf("。"), cut.lastIndexOf("\n"), cut.lastIndexOf("！"), cut.lastIndexOf("？"));
     const finalText = (lastBreak>10 ? cut.slice(0,lastBreak) : cut) + "…";
     return finalText;
   }
 
+  // Generate vertical thumbnail phrase (very short, punchy)
+  function makeThumb(patternId, ctx, maxChars){
+    const basePool = [
+      "清潔感、正義", "その髪、損してる", "第一印象は髪", "1分で激変", "似合うは作れる",
+      "清潔感を、刈る", "仕事勝てる髪", "即・爽やか", "大人の正解ヘア", "就活は前髪から"
+    ];
+    const fadePool = ["フェードで清潔感","スキンフェード","最短で垢抜け","横顔が武器","輪郭、締まる","勝てる刈り上げ"];
+    let pool = basePool;
+    if(/フェード|薄毛|生え際/.test(ctx.p) || /SANDGATE|福井/.test(ctx.b)) pool = pool.concat(fadePool);
+    const pick = rand(pool);
+    // Fit to length
+    const lim = Math.max(4, parseInt(maxChars||12,10));
+    let out = pick;
+    if(out.length>lim) out = out.slice(0, lim-1) + "…";
+    return out;
+  }
+
   const selected = new Set(PATTERNS.map(p=>p.id));
   function renderChips(){
-    chipsWrap.innerHTML = "";
+    chipsWrap.innerHTML="";
     PATTERNS.forEach(p=>{
-      const c = document.createElement("div");
-      c.className = "chip active";
-      c.textContent = p.id;
-      c.dataset.id = p.id;
+      const c=document.createElement("div");
+      c.className="chip active"; c.textContent=p.id; c.dataset.id=p.id;
       c.addEventListener("click", ()=>{
         if(selected.has(p.id)){ selected.delete(p.id); c.classList.remove("active"); }
         else { selected.add(p.id); c.classList.add("active"); }
@@ -268,26 +312,28 @@
     const ctx = { t: target.value, p: pain.value, b: brand.value, k: rand(CTA[cta.value] || ["今すぐ行動"]) };
     let txt = p.text(ctx);
     const tf = TONE[tone.value]; if(tf) txt = tf(txt);
-    txt = injectKeywords(txt, toArray(keywords.value));
+    txt = injectKeywords(txt, toArray($('#keywords').value));
     txt = attachURL(txt);
+    txt = attachTags(txt);
     const lim = parseInt(lengthSel.value,10); txt = limitLength(txt, lim);
-    return { id:p.id, text:txt };
+    const thumb = makeThumb(p.id, ctx, parseInt(thumbLenSel.value,10));
+    return { id:p.id, text:txt, thumb };
   }
 
   function renderCards(items){
     results.innerHTML="";
     items.forEach((it, idx)=>{
-      const card = document.createElement("div"); card.className="card";
-      const meta = document.createElement("div"); meta.className="meta";
-      meta.innerHTML = `<span>${idx+1}</span><span>パターン：${it.id}</span>`;
-      const p = document.createElement("p"); p.textContent = it.text;
-      const copyBtn = document.createElement("button"); copyBtn.className="copy"; copyBtn.textContent="コピー";
-      copyBtn.addEventListener("click", async ()=>{
-        await navigator.clipboard.writeText(it.text);
-        copyBtn.textContent="✓ コピーしました"; copyBtn.style.borderColor="rgba(157,221,85,.6)";
-        setTimeout(()=>{ copyBtn.textContent="コピー"; copyBtn.style.borderColor=""; },1200);
-      });
-      card.appendChild(meta); card.appendChild(p); card.appendChild(copyBtn);
+      const card=document.createElement("div"); card.className="card";
+      const meta=document.createElement("div"); meta.className="meta";
+      meta.innerHTML = `<span>${idx+1}</span><span>パターン：${it.id}</span><span class="thumb">サムネ候補：<strong>${it.thumb}</strong></span>`;
+      const p=document.createElement("p"); p.textContent=it.text;
+      const line=document.createElement("div"); line.style.display="flex"; line.style.gap="8px"; line.style.marginTop="8px"; line.style.flexWrap="wrap";
+      const b1=document.createElement("button"); b1.className="copy"; b1.textContent="本文をコピー";
+      const b2=document.createElement("button"); b2.className="copy"; b2.textContent="サムネをコピー";
+      b1.addEventListener("click", async ()=>{ await navigator.clipboard.writeText(it.text); b1.textContent="✓ コピーしました"; setTimeout(()=>b1.textContent="本文をコピー",1200); });
+      b2.addEventListener("click", async ()=>{ await navigator.clipboard.writeText(it.thumb); b2.textContent="✓ コピーしました"; setTimeout(()=>b2.textContent="サムネをコピー",1200); });
+      line.appendChild(b1); line.appendChild(b2);
+      card.appendChild(meta); card.appendChild(p); card.appendChild(line);
       results.appendChild(card);
     });
   }
@@ -295,9 +341,8 @@
   function generate(){
     const pats = PATTERNS.filter(p=>selected.has(p.id));
     if(!pats.length){ alert("少なくとも1つのパターンを選択してください。"); return; }
-    const num = parseInt(count.value,10);
-    let out = [];
-    while(out.length < num){ out.push(makeOne(rand(pats))); }
+    const num = 10; // default for internal
+    let out=[]; while(out.length<num){ out.push(makeOne(rand(pats))); }
     renderCards(out);
   }
 
@@ -305,11 +350,10 @@
   btnShuffle.addEventListener("click", generate);
   btnClear.addEventListener("click", ()=>{ results.innerHTML=""; });
   btnCopyAll.addEventListener("click", async ()=>{
-    const texts = [...results.querySelectorAll(".card p")].map(p=>p.textContent.trim()).filter(Boolean);
+    const texts=[...results.querySelectorAll(".card p")].map(p=>p.textContent.trim()).filter(Boolean);
     if(!texts.length) return;
     await navigator.clipboard.writeText(texts.join("\n\n"));
-    btnCopyAll.textContent="✓ 全部コピーしました";
-    setTimeout(()=>{ btnCopyAll.textContent="全部コピー"; },1500);
+    btnCopyAll.textContent="✓ 全部コピーしました"; setTimeout(()=>btnCopyAll.textContent="全部コピー",1500);
   });
 
   generate();
