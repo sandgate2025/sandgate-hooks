@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SANDGATE フック生成器 Pro+｜メンズ美容室（福井）</title>
-<meta name="description" content="福井市・SANDGATE サンドゲート向けのショート動画フック生成器。スクロール停止・心理トリガー・CTA・縦長サムネ文言を自動生成。" />
+<title>SANDGATE フック生成器 Pro+++｜メンズ美容室（福井）</title>
+<meta name="description" content="福井市・SANDGATE サンドゲート向けショート動画フック生成器。固定悩みセレクト・固定タグ編集・追加タグ記憶・フォローCTA対応。" />
 <style>
   :root{--bg:#0f1115;--panel:#171a21;--ink:#e8ecf1;--muted:#a6b0c0;--accent:#59d;--accent2:#9d5;--ok:#3bb273;--danger:#e25;--border:#242936;--chip:#242a36;--radius:12px;--radius-sm:8px;--shadow:0 10px 30px rgba(0,0,0,.35);--mono:ui-monospace,Menlo,Consolas,monospace}
   *{box-sizing:border-box}html,body{height:100%}
@@ -29,6 +29,7 @@
   @media (max-width:720px){.row,.row-3{grid-template-columns:1fr}}
   label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
   input[type="text"],input[type="url"],textarea,select{width:100%;background:#0d0f13;color:var(--ink);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;outline:none;font-size:14px;transition:border .2s ease, box-shadow .2s ease}
+  textarea{min-height:72px;resize:vertical}
   input::placeholder,textarea::placeholder{color:#61708a}
   input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(89,157,221,.15)}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
@@ -66,7 +67,7 @@
   <header>
     <div class="wrap title">
       <div class="logo" aria-hidden="true"></div>
-      <h1>SANDGATE フック生成器 <span class="small">Pro+</span></h1>
+      <h1>SANDGATE フック生成器 <span class="small">Pro+++</span></h1>
     </div>
   </header>
 
@@ -75,6 +76,7 @@
       <section class="panel">
         <div class="panel-inner">
           <h2>入力フォーム</h2>
+
           <div class="row">
             <div>
               <label>ターゲット</label>
@@ -83,14 +85,19 @@
               </select>
             </div>
             <div>
-              <label>主な悩み / 制約</label>
+              <label>主な悩み / 制約（固定リスト）</label>
               <select id="pain">
-                <option>セットが決まらない</option><option>似合う髪型がわからない</option><option>うねり・ボリューム</option><option>朝の時短</option><option>校則・職場の規定</option><option selected>薄毛・生え際</option>
+                <option>セットが決まらない</option>
+                <option>似合う髪型がわからない</option>
+                <option>うねり・ボリューム</option>
+                <option>朝の時短</option>
+                <option>校則・職場の規定</option>
+                <option selected>薄毛・生え際</option>
               </select>
             </div>
           </div>
 
-          <div class="row-3 row">
+          <div class="row">
             <div>
               <label>感情トーン</label>
               <select id="tone">
@@ -100,16 +107,21 @@
             <div>
               <label>CTA（行動）</label>
               <select id="cta">
-                <option selected>予約する</option><option>保存する</option><option>DMする</option><option>いいねする</option><option>コメントする</option>
+                <option selected>予約する</option>
+                <option>保存する</option>
+                <option>DMする</option>
+                <option>いいねする</option>
+                <option>コメントする</option>
+                <option>フォローする</option>
               </select>
-            </div>
-            <div>
-              <label>地域・店名（初期値固定）</label>
-              <input id="brand" type="text" value="福井市・SANDGATE サンドゲート" />
             </div>
           </div>
 
-          <div class="row">
+          <div class="row-3 row">
+            <div>
+              <label>地域・店名（初期値）</label>
+              <input id="brand" type="text" value="福井市・SANDGATE サンドゲート" />
+            </div>
             <div>
               <label>予約URL（任意）</label>
               <input id="bookUrl" type="url" placeholder="https://sand-gate.jp/reserve" />
@@ -130,15 +142,20 @@
 
           <div class="row">
             <div>
-              <label>ハッシュタグ（固定＋自動）</label>
-              <input id="extraTags" type="text" placeholder="任意：追加タグ（カンマ区切り）" />
-              <div class="inline">
-                <label class="toggle"><input id="autoTag" type="checkbox" checked /> 自動でタグを付与</label>
-                <span class="pill">固定：#福井メンズ美容室 #SANDGATE #サンドゲート</span>
-                <span class="pill">得意：フェード</span>
-              </div>
-              <div class="note">自動タグはフェード関連と地域タグを状況に合わせて付与します。</div>
+              <label>固定ハッシュタグ（編集可・カンマ区切り）</label>
+              <input id="fixedTags" type="text" value="#福井メンズ美容室, #SANDGATE, #サンドゲート" />
+              <div class="note">※ 先頭に # がなくても自動で付与。ブラウザに保存されます。</div>
             </div>
+            <div>
+              <label>追加ハッシュタグ（自動記憶・カンマ区切り）</label>
+              <input id="extraTags" type="text" placeholder="例：#フェードスタイル, #スキンフェード" />
+              <div class="inline">
+                <label class="toggle"><input id="autoTag" type="checkbox" checked /> 自動タグ（地域/フェード/汎用）を付与</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
             <div>
               <label>縦長サムネ文言（長さ）</label>
               <select id="thumbLen">
@@ -146,6 +163,10 @@
                 <option value="12" selected>短め（〜12字）</option>
                 <option value="16">やや長め（〜16字）</option>
               </select>
+            </div>
+            <div>
+              <label>追加キーワード（本文に自然挿入／カンマ区切り）</label>
+              <input id="keywords" type="text" value="清潔感, 第一印象, フェード" />
             </div>
           </div>
 
@@ -172,38 +193,61 @@
     </div>
   </main>
 
-  <footer class="wrap small">© 2025 SANDGATE Swipe File Generator｜#福井メンズ美容室 #SANDGATE #サンドゲート</footer>
+  <footer class="wrap small">© 2025 SANDGATE Swipe File Generator｜固定悩みセレクト・編集可能タグ・フォローCTA</footer>
 
 <script>
 (function(){
   const $ = (q)=>document.querySelector(q);
   const results = $('#results');
-  const target=$('#target'), pain=$('#pain'), tone=$('#tone'), cta=$('#cta');
-  const brand=$('#brand'), keywords=$('#keywords'), count=$('#count');
-  const bookUrl=$('#bookUrl'), autoUrl=$('#autoUrl'), lengthSel=$('#length');
-  const extraTags=$('#extraTags'), autoTag=$('#autoTag'), thumbLenSel=$('#thumbLen');
+  const target=$('#target'), tone=$('#tone'), cta=$('#cta');
+  const brand=$('#brand'), keywords=$('#keywords'), bookUrl=$('#bookUrl'), autoUrl=$('#autoUrl'), lengthSel=$('#length');
+  const thumbLenSel=$('#thumbLen'), autoTag=$('#autoTag');
+  const fixedTagsInput=$('#fixedTags'), extraTags=$('#extraTags');
+  const painSel=$('#pain');
   const btnGen=$('#gen'), btnClear=$('#clear'), btnShuffle=$('#shuffle'), btnCopyAll=$('#copyAll');
   const chipsWrap=$('#patterns');
 
-  // Controls not present (keywords/count) fallback
-  if(!keywords){ const k=document.createElement('input'); k.id='keywords'; k.type='hidden'; k.value='清潔感, 第一印象, フェード'; document.body.appendChild(k); }
-  if(!count){ const c=document.createElement('select'); c.id='count'; c.innerHTML='<option>10</option>'; document.body.appendChild(c); }
+  // LocalStorage keys
+  const LS = {
+    fixedTags: 'sg_fixed_tags',
+    extraTags: 'sg_extra_tags',
+    brand: 'sg_brand',
+    bookUrl: 'sg_bookurl'
+  };
 
+  // Utils
   const rand = (arr)=>arr[Math.floor(Math.random()*arr.length)];
   const toArray = (s)=> (s||"").split(",").map(t=>t.trim()).filter(Boolean);
+  const ensureHash = (t)=> t.startsWith("#") ? t : ("#"+t.replace(/^#+/,""));
 
+  // Load saved values
+  function loadPersisted(){
+    const fixed = localStorage.getItem(LS.fixedTags);
+    if(fixed){ fixedTagsInput.value = fixed; }
+    const ext = localStorage.getItem(LS.extraTags);
+    if(ext){ extraTags.value = ext; }
+    const b = localStorage.getItem(LS.brand); if(b) brand.value = b;
+    const u = localStorage.getItem(LS.bookUrl); if(u) bookUrl.value = u;
+  }
+
+  // Persist on change
+  fixedTagsInput.addEventListener("change", ()=> localStorage.setItem(LS.fixedTags, fixedTagsInput.value));
+  extraTags.addEventListener("change", ()=> localStorage.setItem(LS.extraTags, extraTags.value));
+  brand.addEventListener("change", ()=> localStorage.setItem(LS.brand, brand.value));
+  bookUrl.addEventListener("change", ()=> localStorage.setItem(LS.bookUrl, bookUrl.value));
+
+  // CTA map (with フォローする)
   const CTA = {
     "予約する":["今すぐ予約","カットはここから","席が埋まる前に予約"],
     "保存する":["あとで見返せるよう保存","保存して次回オーダー","保存→担当に見せて"],
     "DMする":["DMで相談","匿名で相談OK","希望をDMで送って"],
     "いいねする":["いいねで応援","参考になったら👍","続編希望はいいね"],
-    "コメントする":["悩みをコメント","どっち派かコメントで","質問はコメントで"]
+    "コメントする":["悩みをコメント","どっち派かコメントで","質問はコメントで"],
+    "フォローする":["フォローして続編を見る","最新投稿を見逃さないようフォロー","フェード好きはフォロー"]
   };
 
   const VISUAL = ["（数秒の静止）","【先に謝ります】","＼写真は同一人物／","▼ ここだけの話","※ 注意：見たら戻れません"];
 
-  // Hashtag pools (fixed + smart)
-  const FIXED_TAGS = ["#福井メンズ美容室","#SANDGATE","#サンドゲート"];
   const LOCAL_TAGS = ["#福井","#福井市","#福井市美容室","#福井理容室"];
   const FADE_TAGS  = ["#フェードスタイル","#フェードカット","#スキンフェード","#ミッドフェード","#ローフェード","#ハイフェード","#バーバースタイル","#メンズカット","#メンズヘア"];
   const GENERAL_TAGS=["#清潔感","#第一印象","#就活ヘア","#ビジネスヘア","#大人男子","#メンズセット"];
@@ -218,7 +262,7 @@
     { id:"挑発×命令",  text:({t,p,b,k})=>`「セット苦手」って言う前に、これ見てから言って。\n${t}の${p}はこの1分で解決。${k}` },
     { id:"比較×驚き",  text:({t,p,b,k})=>`同一人物、髪型だけで第一印象が激変。\n${t}の${p}向けに${b?b+'実績の':""}ビフォーアフター公開。${k}` },
     { id:"データ×権威",text:({t,p,b,k})=>`第一印象で見られてるのは◯◯％「髪」。\n${t}の${p}ほど差が出る。${k}` },
-    { id:"感情×沈黙",  text:({t,p,b,k})=>`${rand(VISUAL)}\n別れた理由、今ならわかる。髪だった。\n${t}の${p}は今日から変えよう。${k}` },
+    { id:"感情×沈黙",  text:({t,p,b,k})=>`${VISUAL[Math.floor(Math.random()*VISUAL.length)]}\n別れた理由、今ならわかる。髪だった。\n${t}の${p}は今日から変えよう。${k}` },
   ];
 
   const TONE = {
@@ -243,7 +287,7 @@
     const lines = text.split("\n");
     let placed=false;
     for(let i=lines.length-1;i>=0;i--){
-      if(/予約|DM|保存|コメント|いいね/.test(lines[i])){
+      if(/予約|DM|保存|コメント|いいね|フォロー/.test(lines[i])){
         lines[i] = lines[i] + " → " + url;
         placed = true; break;
       }
@@ -252,12 +296,15 @@
     return lines.join("\n");
   }
 
+  function parseFixedTags(){
+    return toArray(fixedTagsInput.value).map(ensureHash);
+  }
+
   function pickTags(){
-    const ext = toArray(extraTags?.value||"").map(t=> t.startsWith("#")?t:("#"+t));
-    const smart = [
-      rand(LOCAL_TAGS), rand(FADE_TAGS), rand(FADE_TAGS), rand(GENERAL_TAGS)
-    ].filter(Boolean);
-    const uniq = Array.from(new Set([...FIXED_TAGS, ...smart, ...ext]));
+    const FIXED = parseFixedTags();
+    const ext = toArray(extraTags?.value||"").map(t=> ensureHash(t));
+    const smart = [rand(LOCAL_TAGS), rand(FADE_TAGS), rand(FADE_TAGS), rand(GENERAL_TAGS)].filter(Boolean);
+    const uniq = Array.from(new Set([...FIXED, ...smart, ...ext]));
     return uniq.join(" ");
   }
 
@@ -276,17 +323,15 @@
     return finalText;
   }
 
-  // Generate vertical thumbnail phrase (very short, punchy)
   function makeThumb(patternId, ctx, maxChars){
     const basePool = [
-      "清潔感、正義", "その髪、損してる", "第一印象は髪", "1分で激変", "似合うは作れる",
-      "清潔感を、刈る", "仕事勝てる髪", "即・爽やか", "大人の正解ヘア", "就活は前髪から"
+      "清潔感、正義","その髪、損してる","第一印象は髪","1分で激変","似合うは作れる",
+      "清潔感を、刈る","仕事勝てる髪","即・爽やか","大人の正解ヘア","就活は前髪から"
     ];
     const fadePool = ["フェードで清潔感","スキンフェード","最短で垢抜け","横顔が武器","輪郭、締まる","勝てる刈り上げ"];
     let pool = basePool;
     if(/フェード|薄毛|生え際/.test(ctx.p) || /SANDGATE|福井/.test(ctx.b)) pool = pool.concat(fadePool);
     const pick = rand(pool);
-    // Fit to length
     const lim = Math.max(4, parseInt(maxChars||12,10));
     let out = pick;
     if(out.length>lim) out = out.slice(0, lim-1) + "…";
@@ -309,10 +354,10 @@
   renderChips();
 
   function makeOne(p){
-    const ctx = { t: target.value, p: pain.value, b: brand.value, k: rand(CTA[cta.value] || ["今すぐ行動"]) };
+    const ctx = { t: target.value, p: painSel.value, b: brand.value, k: rand(CTA[cta.value] || ["今すぐ行動"]) };
     let txt = p.text(ctx);
     const tf = TONE[tone.value]; if(tf) txt = tf(txt);
-    txt = injectKeywords(txt, toArray($('#keywords').value));
+    txt = injectKeywords(txt, toArray(keywords.value));
     txt = attachURL(txt);
     txt = attachTags(txt);
     const lim = parseInt(lengthSel.value,10); txt = limitLength(txt, lim);
@@ -341,11 +386,14 @@
   function generate(){
     const pats = PATTERNS.filter(p=>selected.has(p.id));
     if(!pats.length){ alert("少なくとも1つのパターンを選択してください。"); return; }
-    const num = 10; // default for internal
+    const num = 10;
     let out=[]; while(out.length<num){ out.push(makeOne(rand(pats))); }
     renderCards(out);
   }
 
+  // Initial load
+  loadPersisted();
+  // Buttons
   btnGen.addEventListener("click", generate);
   btnShuffle.addEventListener("click", generate);
   btnClear.addEventListener("click", ()=>{ results.innerHTML=""; });
@@ -356,6 +404,7 @@
     btnCopyAll.textContent="✓ 全部コピーしました"; setTimeout(()=>btnCopyAll.textContent="全部コピー",1500);
   });
 
+  // First render
   generate();
 })();</script>
 </body>
