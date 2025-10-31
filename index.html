@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SANDGATE フック生成器 Pro+++｜メンズ美容室（福井）</title>
-<meta name="description" content="福井市・SANDGATE サンドゲート向けショート動画フック生成器。固定悩みセレクト・固定タグ編集・追加タグ記憶・フォローCTA対応。" />
+<title>SANDGATE フック生成器 Pro+++（GPT接続対応）</title>
+<meta name="description" content="SANDGATE向けショート動画フック生成器。固定悩みセレクト・固定タグ編集・追加タグ記憶・フォローCTA。GPT接続で毎回違う文章を生成。" />
 <style>
   :root{--bg:#0f1115;--panel:#171a21;--ink:#e8ecf1;--muted:#a6b0c0;--accent:#59d;--accent2:#9d5;--ok:#3bb273;--danger:#e25;--border:#242936;--chip:#242a36;--radius:12px;--radius-sm:8px;--shadow:0 10px 30px rgba(0,0,0,.35);--mono:ui-monospace,Menlo,Consolas,monospace}
   *{box-sizing:border-box}html,body{height:100%}
@@ -67,7 +67,7 @@
   <header>
     <div class="wrap title">
       <div class="logo" aria-hidden="true"></div>
-      <h1>SANDGATE フック生成器 <span class="small">Pro+++</span></h1>
+      <h1>SANDGATE フック生成器 <span class="small">Pro+++ / GPT</span></h1>
     </div>
   </header>
 
@@ -170,6 +170,17 @@
             </div>
           </div>
 
+          <div class="row">
+            <div>
+              <label class="toggle"><input id="useGpt" type="checkbox" /> GPTで生成する</label>
+            </div>
+            <div>
+              <label>GPT APIエンドポイント（Vercel）</label>
+              <input id="gptEndpoint" type="url" placeholder="https://your-app.vercel.app/api/generate" />
+              <div class="note">社内向け：このURLは一度入力すればブラウザに保存されます。</div>
+            </div>
+          </div>
+
           <div class="chips" id="patterns"></div>
 
           <div class="btns">
@@ -193,7 +204,7 @@
     </div>
   </main>
 
-  <footer class="wrap small">© 2025 SANDGATE Swipe File Generator｜固定悩みセレクト・編集可能タグ・フォローCTA</footer>
+  <footer class="wrap small">© 2025 SANDGATE Swipe File Generator｜固定悩みセレクト・編集可能タグ・フォローCTA・GPT接続</footer>
 
 <script>
 (function(){
@@ -206,21 +217,21 @@
   const painSel=$('#pain');
   const btnGen=$('#gen'), btnClear=$('#clear'), btnShuffle=$('#shuffle'), btnCopyAll=$('#copyAll');
   const chipsWrap=$('#patterns');
+  const useGpt=$('#useGpt'), gptEndpoint=$('#gptEndpoint');
 
-  // LocalStorage keys
   const LS = {
     fixedTags: 'sg_fixed_tags',
     extraTags: 'sg_extra_tags',
     brand: 'sg_brand',
-    bookUrl: 'sg_bookurl'
+    bookUrl: 'sg_bookurl',
+    gptEndpoint: 'sg_gpt_endpoint',
+    useGpt: 'sg_use_gpt'
   };
 
-  // Utils
   const rand = (arr)=>arr[Math.floor(Math.random()*arr.length)];
   const toArray = (s)=> (s||"").split(",").map(t=>t.trim()).filter(Boolean);
   const ensureHash = (t)=> t.startsWith("#") ? t : ("#"+t.replace(/^#+/,""));
 
-  // Load saved values
   function loadPersisted(){
     const fixed = localStorage.getItem(LS.fixedTags);
     if(fixed){ fixedTagsInput.value = fixed; }
@@ -228,15 +239,17 @@
     if(ext){ extraTags.value = ext; }
     const b = localStorage.getItem(LS.brand); if(b) brand.value = b;
     const u = localStorage.getItem(LS.bookUrl); if(u) bookUrl.value = u;
+    const ep = localStorage.getItem(LS.gptEndpoint); if(ep) gptEndpoint.value = ep;
+    const ug = localStorage.getItem(LS.useGpt); if(ug){ useGpt.checked = ug === '1'; }
   }
 
-  // Persist on change
   fixedTagsInput.addEventListener("change", ()=> localStorage.setItem(LS.fixedTags, fixedTagsInput.value));
   extraTags.addEventListener("change", ()=> localStorage.setItem(LS.extraTags, extraTags.value));
   brand.addEventListener("change", ()=> localStorage.setItem(LS.brand, brand.value));
   bookUrl.addEventListener("change", ()=> localStorage.setItem(LS.bookUrl, bookUrl.value));
+  gptEndpoint.addEventListener("change", ()=> localStorage.setItem(LS.gptEndpoint, gptEndpoint.value));
+  useGpt.addEventListener("change", ()=> localStorage.setItem(LS.useGpt, useGpt.checked ? '1' : '0'));
 
-  // CTA map (with フォローする)
   const CTA = {
     "予約する":["今すぐ予約","カットはここから","席が埋まる前に予約"],
     "保存する":["あとで見返せるよう保存","保存して次回オーダー","保存→担当に見せて"],
@@ -247,7 +260,6 @@
   };
 
   const VISUAL = ["（数秒の静止）","【先に謝ります】","＼写真は同一人物／","▼ ここだけの話","※ 注意：見たら戻れません"];
-
   const LOCAL_TAGS = ["#福井","#福井市","#福井市美容室","#福井理容室"];
   const FADE_TAGS  = ["#フェードスタイル","#フェードカット","#スキンフェード","#ミッドフェード","#ローフェード","#ハイフェード","#バーバースタイル","#メンズカット","#メンズヘア"];
   const GENERAL_TAGS=["#清潔感","#第一印象","#就活ヘア","#ビジネスヘア","#大人男子","#メンズセット"];
@@ -273,6 +285,11 @@
     "感動": (s)=> s.replace("昔の自分へ：","あの日の自分へ。").replace("激変。","劇的に変わる。")
   };
 
+  function parseFixedTags(){
+    return (document.querySelector('#fixedTags').value || '')
+      .split(',').map(s=>s.trim()).filter(Boolean)
+      .map(t=> t.startsWith('#') ? t : '#'+t.replace(/^#+/,'') );
+  }
   function injectKeywords(text,kws){
     if(!kws.length) return text;
     const tag = " #" + kws.slice(0,3).map(x=>x.replace(/\s+/g,'')).join(" #");
@@ -280,7 +297,6 @@
     if(lines.length>1) lines[1] = lines[1] + " " + tag; else text += " " + tag;
     return lines.join("\n");
   }
-
   function attachURL(text){
     const url = bookUrl.value.trim();
     if(!url || !autoUrl.checked) return text;
@@ -295,25 +311,22 @@
     if(!placed) lines.push("予約はこちら → " + url);
     return lines.join("\n");
   }
-
-  function parseFixedTags(){
-    return toArray(fixedTagsInput.value).map(ensureHash);
-  }
-
   function pickTags(){
     const FIXED = parseFixedTags();
-    const ext = toArray(extraTags?.value||"").map(t=> ensureHash(t));
+    const ext = (extraTags?.value || '').split(',').map(s=>s.trim()).filter(Boolean).map(t=> t.startsWith('#') ? t : '#'+t.replace(/^#+/,'') );
+    const LOCAL_TAGS = ["#福井","#福井市","#福井市美容室","#福井理容室"];
+    const FADE_TAGS  = ["#フェードスタイル","#フェードカット","#スキンフェード","#ミッドフェード","#ローフェード","#ハイフェード","#バーバースタイル","#メンズカット","#メンズヘア"];
+    const GENERAL_TAGS=["#清潔感","#第一印象","#就活ヘア","#ビジネスヘア","#大人男子","#メンズセット"];
+    const rand = (arr)=>arr[Math.floor(Math.random()*arr.length)];
     const smart = [rand(LOCAL_TAGS), rand(FADE_TAGS), rand(FADE_TAGS), rand(GENERAL_TAGS)].filter(Boolean);
     const uniq = Array.from(new Set([...FIXED, ...smart, ...ext]));
     return uniq.join(" ");
   }
-
   function attachTags(text){
     if(!autoTag.checked) return text;
     const tags = pickTags();
     return text + "\n" + tags;
   }
-
   function limitLength(text, limit){
     if(!limit || limit<=0) return text;
     if(text.length <= limit) return text;
@@ -322,7 +335,6 @@
     const finalText = (lastBreak>10 ? cut.slice(0,lastBreak) : cut) + "…";
     return finalText;
   }
-
   function makeThumb(patternId, ctx, maxChars){
     const basePool = [
       "清潔感、正義","その髪、損してる","第一印象は髪","1分で激変","似合うは作れる",
@@ -331,7 +343,7 @@
     const fadePool = ["フェードで清潔感","スキンフェード","最短で垢抜け","横顔が武器","輪郭、締まる","勝てる刈り上げ"];
     let pool = basePool;
     if(/フェード|薄毛|生え際/.test(ctx.p) || /SANDGATE|福井/.test(ctx.b)) pool = pool.concat(fadePool);
-    const pick = rand(pool);
+    const pick = pool[Math.floor(Math.random()*pool.length)];
     const lim = Math.max(4, parseInt(maxChars||12,10));
     let out = pick;
     if(out.length>lim) out = out.slice(0, lim-1) + "…";
@@ -354,10 +366,10 @@
   renderChips();
 
   function makeOne(p){
-    const ctx = { t: target.value, p: painSel.value, b: brand.value, k: rand(CTA[cta.value] || ["今すぐ行動"]) };
+    const ctx = { t: target.value, p: painSel.value, b: brand.value, k: (function(){const c=CTA[cta.value]||["今すぐ行動"];return c[Math.floor(Math.random()*c.length)];})() };
     let txt = p.text(ctx);
-    const tf = TONE[tone.value]; if(tf) txt = tf(txt);
-    txt = injectKeywords(txt, toArray(keywords.value));
+    const T = TONE[tone.value]; if(T) txt = T(txt);
+    txt = injectKeywords(txt, (keywords.value || '').split(',').map(s=>s.trim()).filter(Boolean));
     txt = attachURL(txt);
     txt = attachTags(txt);
     const lim = parseInt(lengthSel.value,10); txt = limitLength(txt, lim);
@@ -383,29 +395,70 @@
     });
   }
 
-  function generate(){
+  async function generateWithGPT(payload){
+    const endpoint = gptEndpoint.value.trim();
+    if(!endpoint) throw new Error('GPTエンドポイント未設定');
+    const r = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if(!r.ok) throw new Error('APIエラー: ' + r.status);
+    return await r.json(); // { items: [ { body, thumb }, ... ] }
+  }
+
+  async function generate(){
     const pats = PATTERNS.filter(p=>selected.has(p.id));
     if(!pats.length){ alert("少なくとも1つのパターンを選択してください。"); return; }
-    const num = 10;
-    let out=[]; while(out.length<num){ out.push(makeOne(rand(pats))); }
+
+    const payload = {
+      target: target.value,
+      pain: painSel.value,
+      tone: tone.value,
+      cta: cta.value,
+      brand: brand.value,
+      bookUrl: bookUrl.value.trim() || null,
+      fixedTags: parseFixedTags(),
+      extraTags: (extraTags?.value || '').split(',').map(s=>s.trim()).filter(Boolean),
+      lengthLimit: parseInt(lengthSel.value,10) || 0,
+      count: 10
+    };
+
+    try {
+      if(useGpt.checked){
+        const { items } = await generateWithGPT(payload);
+        const out = (items || []).map((it, i)=> ({
+          id: 'GPT-'+(i+1),
+          text: it.body,
+          thumb: it.thumb || '清潔感、正義'
+        }));
+        if(out.length){ renderCards(out); return; }
+      }
+    } catch (e){
+      console.warn('GPT生成に失敗 → ローカル生成へフォールバック', e);
+      alert('GPT生成に失敗しました。ローカル生成で続行します。');
+    }
+
+    let out=[]; while(out.length<10){ out.push(makeOne(pats[Math.floor(Math.random()*pats.length)])); }
     renderCards(out);
   }
 
-  // Initial load
-  loadPersisted();
-  // Buttons
-  btnGen.addEventListener("click", generate);
-  btnShuffle.addEventListener("click", generate);
-  btnClear.addEventListener("click", ()=>{ results.innerHTML=""; });
-  btnCopyAll.addEventListener("click", async ()=>{
-    const texts=[...results.querySelectorAll(".card p")].map(p=>p.textContent.trim()).filter(Boolean);
-    if(!texts.length) return;
-    await navigator.clipboard.writeText(texts.join("\n\n"));
-    btnCopyAll.textContent="✓ 全部コピーしました"; setTimeout(()=>btnCopyAll.textContent="全部コピー",1500);
-  });
+  function init(){
+    loadPersisted();
+    btnGen.addEventListener("click", generate);
+    btnShuffle.addEventListener("click", generate);
+    btnClear.addEventListener("click", ()=>{ results.innerHTML=""; });
+    btnCopyAll.addEventListener("click", async ()=>{
+      const texts=[...results.querySelectorAll(".card p")].map(p=>p.textContent.trim()).filter(Boolean);
+      if(!texts.length) return;
+      await navigator.clipboard.writeText(texts.join("\n\n"));
+      btnCopyAll.textContent="✓ 全部コピーしました"; setTimeout(()=>btnCopyAll.textContent="全部コピー",1500);
+    });
+    // 初回はローカルで10本生成
+    generate();
+  }
 
-  // First render
-  generate();
+  window.addEventListener('DOMContentLoaded', init);
 })();</script>
 </body>
 </html>
