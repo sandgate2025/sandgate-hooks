@@ -2,8 +2,9 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SANDGATE GPT Hooks｜管理ページ</title>
+<!-- 📵 モバイル拡大禁止 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>SAND GATE　SNSフック生成</title>
 <meta name="color-scheme" content="light only" />
 <style>
   :root{
@@ -11,25 +12,45 @@
     --accent:#b08b46; --accent-ink:#2f241b;
     --radius:14px; --shadow:0 4px 18px rgba(47,36,27,.08);
     --shadow-deep:0 10px 28px rgba(47,36,27,.12);
+    --control-h:52px;       /* ⬅︎ コントロールの高さを大きく */
+    --control-fz:16px;      /* ⬅︎ 文字サイズも拡大        */
   }
+  *,*::before,*::after{box-sizing:border-box}
   html,body{background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;line-height:1.6}
   .wrap{max-width:980px;margin:auto;padding:20px}
   header{display:flex;gap:14px;align-items:center;margin-bottom:16px}
-  .logo{width:48px;height:48px;border-radius:50%;background:radial-gradient(120% 120% at 30% 30%, #c7a86a 0, #a5823e 35%, #7b5c2e 60%, #3b2b23 100%);display:grid;place-items:center;color:#fff;font-weight:800}
-  h1{font-size:20px;margin:0} .sub{color:var(--muted);font-size:12px;margin-top:2px}
+  .brand-logo{
+    width:56px;height:56px;border-radius:12px;object-fit:cover;background:#e8dcc7;border:1px solid var(--line);box-shadow:var(--shadow)
+  }
+  /* ロゴが無いときの代替 */
+  .logo-fallback{
+    width:56px;height:56px;border-radius:12px;display:grid;place-items:center;
+    background:radial-gradient(120% 120% at 30% 30%, #c7a86a 0, #a5823e 35%, #7b5c2e 60%, #3b2b23 100%);
+    color:#fff;font-weight:800;letter-spacing:.5px
+  }
+  h1{font-size:20px;margin:0}
+  .sub{color:var(--muted);font-size:12px;margin-top:2px}
 
   .panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
   .grid{display:grid;gap:12px;grid-template-columns:repeat(12,1fr)}
   .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-8{grid-column:span 8}.col-9{grid-column:span 9}.col-12{grid-column:span 12}
   @media (max-width:900px){ .col-3,.col-4,.col-6,.col-8,.col-9{grid-column:span 12} }
+
   label{font-weight:600;font-size:13px;display:block;margin-bottom:6px}
   input[type="text"],input[type="url"],input[type="number"],textarea,select{
-    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);outline:0;transition:.2s}
-  textarea{min-height:78px;resize:vertical}
+    width:100%;max-width:100%;
+    height:var(--control-h);
+    padding:12px 14px;
+    font-size:var(--control-fz);
+    border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);outline:0;transition:.2s;
+  }
+  /* セレクトの見た目少し大きく */
+  select{appearance:none;background-image:linear-gradient(45deg, transparent 50%, var(--muted) 50%),linear-gradient(135deg, var(--muted) 50%, transparent 50%);background-position:calc(100% - 18px) calc(50% - 4px), calc(100% - 13px) calc(50% + 4px);background-size:6px 6px, 6px 6px;background-repeat:no-repeat;padding-right:36px}
+  textarea{min-height:calc(var(--control-h)*2);resize:vertical}
   input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(176,139,70,.15)}
   .hint{font-size:12px;color:var(--muted);margin-top:4px}
 
-  .btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;background:linear-gradient(180deg,#d9bf84,#b18a45 60%,#9e793a);color:#fff;font-weight:700;cursor:pointer;box-shadow:var(--shadow-deep);transition:transform .08s ease}
+  .btn{appearance:none;border:0;border-radius:12px;padding:12px 16px;background:linear-gradient(180deg,#d9bf84,#b18a45 60%,#9e793a);color:#fff;font-weight:700;cursor:pointer;box-shadow:var(--shadow-deep);transition:transform .08s ease}
   .btn:active{transform:translateY(1px)}
   .btn.secondary{background:#fff;color:var(--accent-ink);border:1px solid var(--line);box-shadow:var(--shadow)}
   .btn.ghost{background:transparent;border:1px dashed var(--line);color:var(--muted)}
@@ -49,8 +70,13 @@
 <body>
 <div class="wrap">
   <header>
-    <div class="logo">SG</div>
-    <div><h1>SANDGATE フック生成 管理ページ</h1><div class="sub">福井市メンズ美容室｜フェード特化｜スタッフ用ジェネレーター</div></div>
+    <!-- ロゴ：logo.png があれば img、無ければ fallback -->
+    <img src="logo.png" alt="SAND GATE" class="brand-logo" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='grid'">
+    <div id="logoFallback" class="logo-fallback" style="display:none">SG</div>
+    <div>
+      <h1>SAND GATE　SNSフック生成</h1>
+      <div class="sub">SAND GATEスタッフ専用のフックジェネレーターです</div>
+    </div>
   </header>
 
   <!-- 入力エリア -->
@@ -79,9 +105,12 @@
           <div class="col-6">
             <select id="painSel">
               <option value="">選択してください</option>
-              <option>薄毛・生え際</option><option>直毛でボリュームが出ない</option>
-              <option>くせ毛・うねり</option><option>校則・会社規定</option>
-              <option>朝のセットが苦手</option><option>頭皮のベタつき</option>
+              <option>直毛でボリュームが出ない</option>
+              <option>薄毛・生え際</option>
+              <option>くせ毛・うねり</option>
+              <option>校則・会社規定</option>
+              <option>朝のセットが苦手</option>
+              <option>頭皮のベタつき</option>
               <option value="__custom">その他（自由入力）</option>
             </select>
           </div>
@@ -108,26 +137,32 @@
 
       <div class="col-9">
         <label>ブランド（店名・地域）</label>
-        <input id="brand" type="text" value="福井市・SANDGATE サンドゲート">
+        <input id="brand" type="text" value="福井市・SAND GATE">
         <div class="hint">投稿文に自然に挿入されます。自由に編集可。</div>
       </div>
       <div class="col-3">
         <label>生成件数 / 本文上限</label>
         <div class="grid">
-          <div class="col-6"><input id="count" type="number" min="1" max="20" value="10"></div>
+          <!-- 生成件数：1〜4 プルダウン -->
+          <div class="col-6">
+            <select id="count">
+              <option>1</option><option selected>2</option><option>3</option><option>4</option>
+            </select>
+          </div>
           <div class="col-6"><input id="lengthLimit" type="number" min="0" max="200" value="100"></div>
         </div>
       </div>
 
       <div class="col-12">
         <label>固定ハッシュタグ（常に付与）</label>
-        <input id="fixedTags" type="text" value="#福井メンズ美容室 #SANDGATE #サンドゲート">
+        <!-- 4行表示 -->
+        <textarea id="fixedTags" rows="4">#福井メンズ美容室 #SANDGATE #サンドゲート</textarea>
         <div class="hint">半角スペース区切り。例：#福井メンズ美容室 #SANDGATE #サンドゲート</div>
       </div>
 
       <div class="col-12">
         <label>追加ハッシュタグ（任意／前回値を自動復元）</label>
-        <input id="extraTags" type="text" placeholder="#フェード #スキンフェード #福井市 #メンズカット #フェードスタイル">
+        <textarea id="extraTags" rows="4" placeholder="#フェード #スキンフェード #福井市 #メンズカット #フェードスタイル"></textarea>
       </div>
 
       <div class="col-12 btn-row">
@@ -153,13 +188,13 @@
     <div id="cards" class="cards"></div>
   </section>
 
-  <footer class="sub" style="text-align:center;margin:20px 0">© SANDGATE. Built with GPT-4o-mini.</footer>
+  <footer class="sub" style="text-align:center;margin:20px 0">© SAND GATE. Built with GPT-4o-mini.</footer>
 </div>
 
 <script>
 /* ===== 設定 ===== */
 const API_ENDPOINT = "https://sandgate-gpt-api.vercel.app/api/generate";
-const LS_KEY = "sandgate_hooks_config_v1";
+const LS_KEY = "sandgate_hooks_config_v2";
 
 /* ===== Util ===== */
 const $ = s => document.querySelector(s);
@@ -180,6 +215,9 @@ $("#targetSel").addEventListener("change", ()=>onComboChange("#targetSel","#targ
 $("#painSel").addEventListener("change", ()=>onComboChange("#painSel","#painFree"));
 
 /* ===== フォームIO ===== */
+function splitTags(text){
+  return String(text||"").split(/\s+/).filter(Boolean);
+}
 function getForm(){
   return {
     target: comboValue($("#targetSel"), $("#targetFree")),
@@ -187,14 +225,13 @@ function getForm(){
     tone: $("#tone").value, cta: $("#cta").value,
     brand: $("#brand").value.trim(),
     bookUrl: $("#bookUrl").value.trim(),
-    fixedTags: $("#fixedTags").value.trim().split(/\s+/).filter(Boolean),
-    extraTags: $("#extraTags").value.trim().split(/\s+/).filter(Boolean),
-    count: Math.max(1, Math.min(20, parseInt($("#count").value||"10",10))),
+    fixedTags: splitTags($("#fixedTags").value),
+    extraTags: splitTags($("#extraTags").value),
+    count: Math.max(1, Math.min(4, parseInt($("#count").value||"2",10))),  // 1〜4に制限
     lengthLimit: Math.max(0, Math.min(200, parseInt($("#lengthLimit").value||"0",10)))
   };
 }
 function setForm(cfg){
-  // ドロップダウンに入らない値は自由入力に反映
   const setCombo = (sel, free, val) => {
     const found = [...sel.options].some(o=>o.value===val||o.text===val);
     if(found){ sel.value = val; free.style.display="none"; free.value=""; }
@@ -206,11 +243,12 @@ function setForm(cfg){
 
   $("#tone").value = cfg.tone ?? "共感";
   $("#cta").value = cfg.cta ?? "予約する";
-  $("#brand").value = cfg.brand ?? "福井市・SANDGATE サンドゲート";
+  $("#brand").value = cfg.brand ?? "福井市・SAND GATE";
   $("#bookUrl").value = cfg.bookUrl ?? "";
   $("#fixedTags").value = (cfg.fixedTags ?? ["#福井メンズ美容室","#SANDGATE","#サンドゲート"]).join(" ");
   $("#extraTags").value = (cfg.extraTags ?? []).join(" ");
-  $("#count").value = cfg.count ?? 10; $("#lengthLimit").value = cfg.lengthLimit ?? 100;
+  $("#count").value = String(Math.max(1, Math.min(4, Number(cfg.count ?? 2))));
+  $("#lengthLimit").value = cfg.lengthLimit ?? 100;
 }
 function saveConfig(){ localStorage.setItem(LS_KEY, JSON.stringify(getForm())); toast("設定を保存しました"); }
 function loadConfig(){ try{ const raw=localStorage.getItem(LS_KEY); if(raw) setForm(JSON.parse(raw)); else setForm({}); } catch{ setForm({}); } }
@@ -242,11 +280,16 @@ function exportCSV(items){
   const a=document.createElement("a"); a.href=url; a.download="sandgate_hooks.csv"; a.click(); URL.revokeObjectURL(url);
 }
 
+/* ===== URL/タグ重複の安全処理 ===== */
+function appendOnce(base, addition){
+  if(!addition) return base;
+  return base.includes(addition) ? base : (base + (base.endsWith("\n")? "" : "\n") + addition);
+}
+
 /* ===== GPT 呼び出し ===== */
 async function generate(){
   hideErr();
   const payload=getForm();
-  // バリデーション簡易
   if(!payload.target){ showErr("ターゲットを選ぶか入力してください。"); return; }
   if(!payload.pain){ showErr("悩み/制約を選ぶか入力してください。"); return; }
 
@@ -257,12 +300,30 @@ async function generate(){
       const text=await res.text(); showErr(`APIエラー: ${res.status} ${res.statusText}\n${text}`); return;
     }
     const data=await res.json();
-    const fixed=payload.fixedTags.join(" "), extra=payload.extraTags.join(" ");
-    const tags=[fixed,extra].filter(Boolean).join(" ");
-    const items=(data.items||[]).map(x=>{
-      const body=(x.body||"").trim() + (payload.bookUrl?`\n→ ${payload.bookUrl}`:"") + (tags?`\n${tags}`:"");
+
+    const fixed=payload.fixedTags.join(" ");
+    const extra=payload.extraTags.join(" ");
+    const tagLine=[fixed,extra].filter(Boolean).join(" ");
+
+    const items=(data.items||[]).slice(0, payload.count).map(x=>{
+      let body=(x.body||"").trim();
+
+      // 予約URLが本文内に既に含まれていれば追記しない
+      if(payload.bookUrl){
+        try{
+          const u = new URL(payload.bookUrl);
+          const must = u.href.replace(/\/$/, "");
+          const has = body.includes(must) || body.includes(u.hostname);
+          if(!has) body = appendOnce(body, `→ ${must}`);
+        }catch{ /* 無効URLなら何もしない */ }
+      }
+
+      // タグ行も重複しないように一括で末尾へ
+      if(tagLine) body = appendOnce(body, tagLine);
+
       return { body, thumb: x.thumb || "清潔感、正義" };
     });
+
     window._lastItems=items; render(items); toast(`生成完了：${items.length}件`);
   }catch(e){
     showErr("通信エラー: "+String(e));
@@ -282,7 +343,9 @@ $("#btnCopyAll").addEventListener("click", ()=>{
 $("#btnExport").addEventListener("click", ()=>{ const items=window._lastItems||[]; if(!items.length) return toast("エクスポート対象がありません"); exportCSV(items); });
 
 /* 初期化 */
-loadConfig();
+(function loadConfig(){
+  try{ const raw=localStorage.getItem(LS_KEY); if(raw) setForm(JSON.parse(raw)); else setForm({}); } catch{ setForm({}); }
+})();
 </script>
 </body>
 </html>
