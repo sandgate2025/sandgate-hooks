@@ -1,464 +1,354 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SANDGATE フック生成器 Pro+++（GPT接続対応）</title>
-<meta name="description" content="SANDGATE向けショート動画フック生成器。固定悩みセレクト・固定タグ編集・追加タグ記憶・フォローCTA。GPT接続で毎回違う文章を生成。" />
+<title>SANDGATE GPT Hooks｜管理ページ</title>
+<meta name="color-scheme" content="light only" />
+
+<!-- ====== Brand Theme (SANDGATE ロゴ基調) ====== -->
 <style>
-  :root{--bg:#0f1115;--panel:#171a21;--ink:#e8ecf1;--muted:#a6b0c0;--accent:#59d;--accent2:#9d5;--ok:#3bb273;--danger:#e25;--border:#242936;--chip:#242a36;--radius:12px;--radius-sm:8px;--shadow:0 10px 30px rgba(0,0,0,.35);--mono:ui-monospace,Menlo,Consolas,monospace}
-  *{box-sizing:border-box}html,body{height:100%}
-  body{margin:0;font-family:Inter,system-ui,-apple-system,"Noto Sans JP",sans-serif;background:
-    radial-gradient(1200px 800px at 80% -20%, rgba(89,157,221,.12), transparent 60%),
-    radial-gradient(800px 600px at -10% 110%, rgba(157,221,85,.12), transparent 60%),
-    var(--bg);color:var(--ink);line-height:1.6}
-  header{position:sticky;top:0;z-index:10;backdrop-filter:blur(6px);background:linear-gradient(180deg, rgba(15,17,21,.9), rgba(15,17,21,.65));border-bottom:1px solid var(--border)}
-  .wrap{max-width:1120px;margin:0 auto;padding:20px}
-  .title{display:flex;align-items:center;gap:12px}
-  .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:inset 0 0 0 2px rgba(255,255,255,.12)}
-  h1{font-size:22px;margin:0}
-  main{padding:32px 0 60px}
-  .grid{display:grid;gap:18px;grid-template-columns:1.2fr .8fr}
-  @media (max-width:980px){.grid{grid-template-columns:1fr}}
-  .panel{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-  .panel-inner{padding:18px}
-  .panel h2{margin:0 0 8px;font-size:16px;color:var(--muted);font-weight:600;letter-spacing:.02em}
-  .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
-  .row-3{grid-template-columns:1fr 1fr 1fr}
-  .row + .row, .row + .row-3, .row-3 + .row{margin-top:12px}
-  @media (max-width:720px){.row,.row-3{grid-template-columns:1fr}}
-  label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-  input[type="text"],input[type="url"],textarea,select{width:100%;background:#0d0f13;color:var(--ink);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;outline:none;font-size:14px;transition:border .2s ease, box-shadow .2s ease}
-  textarea{min-height:72px;resize:vertical}
-  input::placeholder,textarea::placeholder{color:#61708a}
-  input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(89,157,221,.15)}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-  .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--border);font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
-  .chip.active{outline:2px solid rgba(89,157,221,.4);color:var(--ink)}
-  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-  .btn{border:1px solid var(--border);background:linear-gradient(180deg,#1a1f29,#131720);color:var(--ink);padding:12px 16px;border-radius:10px;cursor:pointer;font-weight:600;transition:transform .06s ease, box-shadow .2s ease, border-color .2s ease}
-  .btn:hover{border-color:var(--accent);box-shadow:0 8px 18px rgba(0,0,0,.35)}
+  :root{
+    --bg:#f5efe3;          /* 生成AIロゴの台紙っぽいベージュ */
+    --ink:#3b2b23;         /* ダークブラウン（本文）       */
+    --muted:#6f5a4b;       /* 補助テキスト                 */
+    --line:#e7dfd0;        /* 罫線                         */
+    --accent:#b08b46;      /* ゴールド系アクセント         */
+    --accent-ink:#2f241b;  /* 濃いブラウン(ボタン文字)     */
+
+    --radius:16px;
+    --shadow:0 4px 20px rgba(47,36,27,.08);
+    --shadow-deep:0 10px 30px rgba(47,36,27,.12);
+  }
+  html,body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue",
+                 "Segoe UI", "Hiragino Kaku Gothic ProN","Yu Gothic", Meiryo, sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:1100px;margin:auto;padding:24px;}
+  header{
+    display:flex;gap:16px;align-items:center;margin-bottom:20px;
+    border-bottom:1px solid var(--line);padding-bottom:16px;
+  }
+  .logo{
+    width:54px;height:54px;border-radius:50%;
+    background:radial-gradient(120% 120% at 30% 30%, #c7a86a 0, #a5823e 35%, #7b5c2e 60%, #3b2b23 100%);
+    display:grid;place-items:center;color:#fff;font-weight:800;letter-spacing:1px;
+    box-shadow:var(--shadow);
+  }
+  h1{font-size:22px;margin:0;}
+  .sub{color:var(--muted);font-size:13px;margin-top:2px;}
+
+  /* ====== Panel / Inputs ====== */
+  .panel{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:18px;margin-bottom:18px;
+  }
+  .grid{
+    display:grid;gap:14px;
+    grid-template-columns:repeat(12,1fr);
+  }
+  .col-6{grid-column:span 6;}
+  .col-4{grid-column:span 4;}
+  .col-8{grid-column:span 8;}
+  .col-12{grid-column:span 12;}
+  @media (max-width:900px){
+    .col-6,.col-4,.col-8{grid-column:span 12;}
+  }
+  label{font-weight:600;font-size:13px;display:block;margin-bottom:6px;}
+  input[type="text"], input[type="url"], input[type="number"], textarea, select{
+    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;
+    background:#fff;color:var(--ink);outline:none;transition:.2s;
+  }
+  textarea{min-height:78px;resize:vertical;}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(176,139,70,.15);}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .pill{
+    padding:8px 12px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--muted);
+    background:#fff;cursor:pointer;user-select:none;
+  }
+  .pill.active{border-color:var(--accent);color:var(--accent-ink);background:linear-gradient(#fff,#fff8ef);}
+  .hint{font-size:12px;color:var(--muted);margin-top:4px}
+
+  /* ====== Buttons ====== */
+  .btn{
+    appearance:none;border:0;outline:0;border-radius:12px;padding:10px 14px;
+    background:linear-gradient(180deg,#d9bf84,#b18a45 60%,#9e793a);
+    color:#fff;font-weight:700;letter-spacing:.2px;cursor:pointer;box-shadow:var(--shadow-deep);
+    transition:transform .08s ease, filter .2s ease;
+  }
   .btn:active{transform:translateY(1px)}
-  .btn.primary{background:linear-gradient(180deg,var(--accent),#2a65a8);border-color:rgba(255,255,255,.15)}
-  .btn.ghost{background:transparent}
-  .btn.ok{background:linear-gradient(180deg,var(--ok),#1b6c4a)}
-  .btn.danger{background:linear-gradient(180deg,var(--danger),#a4163a)}
-  .note{color:var(--muted);font-size:12px;margin-top:8px}
-  .result-grid{display:grid;gap:14px;grid-template-columns:1fr 1fr}
-  @media (max-width:980px){.result-grid{grid-template-columns:1fr}}
-  .card{border:1px solid var(--border);border-radius:var(--radius);background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));padding:16px;box-shadow:var(--shadow)}
-  .card .meta{font-size:12px;color:var(--muted);display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
-  .card p{margin:10px 0 0;white-space:pre-wrap}
-  .badge{display:inline-block;font-size:11px;color:#111;background:var(--accent2);padding:3px 8px;border-radius:999px;font-weight:700;letter-spacing:.02em}
-  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
-  .toolbar .left{display:flex;align-items:center;gap:10px}
-  .toolbar .right{display:flex;align-items:center;gap:8px}
-  .kbd{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--border);background:var(--chip);padding:2px 6px;border-radius:6px}
-  .copy{display:inline-flex;align-items:center;gap:8px;font-size:12px;padding:8px 10px;border-radius:8px;border:1px dashed var(--border);cursor:pointer}
-  footer{padding:24px 20px;color:var(--muted);border-top:1px solid var(--border)}
-  .small{font-size:12px;color:var(--muted)}
-  .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .toggle{display:flex;gap:8px;align-items:center}
-  .thumb{font-family:var(--mono);font-size:12px;background:#10141c;border:1px dashed var(--border);padding:6px 8px;border-radius:8px;display:inline-flex;gap:8px;align-items:center}
-  .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:var(--chip);font-size:11px;color:var(--muted)}
+  .btn.secondary{
+    background:#fff;color:var(--accent-ink);border:1px solid var(--line);box-shadow:var(--shadow);
+  }
+  .btn.ghost{background:transparent;border:1px dashed var(--line);color:var(--muted)}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap}
+
+  /* ====== Result Cards ====== */
+  .cards{display:grid;gap:12px;grid-template-columns:repeat(12,1fr);}
+  .card{
+    grid-column:span 6;background:#fff;border:1px solid var(--line);
+    border-radius:16px;padding:14px;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .card h3{font-size:16px;margin:0;color:var(--accent-ink)}
+  .card p{margin:0;white-space:pre-wrap}
+  .card .tools{display:flex;gap:8px;margin-top:6px}
+  @media (max-width:900px){ .card{grid-column:span 12;} }
+
+  /* ====== Footer ====== */
+  footer{margin:28px 0;color:var(--muted);font-size:12px;text-align:center}
 </style>
 </head>
 <body>
-  <header>
-    <div class="wrap title">
-      <div class="logo" aria-hidden="true"></div>
-      <h1>SANDGATE フック生成器 <span class="small">Pro+++ / GPT</span></h1>
-    </div>
-  </header>
+  <div class="wrap">
+    <header>
+      <div class="logo">SG</div>
+      <div>
+        <h1>SANDGATE フック生成 管理ページ</h1>
+        <div class="sub">福井市メンズ美容室｜フェード特化｜スタッフ用ジェネレーター</div>
+      </div>
+    </header>
 
-  <main class="wrap">
-    <div class="grid">
-      <section class="panel">
-        <div class="panel-inner">
-          <h2>入力フォーム</h2>
-
-          <div class="row">
-            <div>
-              <label>ターゲット</label>
-              <select id="target">
-                <option>大学生</option><option selected>社会人</option><option>営業職</option><option>パパ世代</option><option>就活・面接</option><option>デート前</option><option>ビジネスカジュアル</option>
-              </select>
-            </div>
-            <div>
-              <label>主な悩み / 制約（固定リスト）</label>
-              <select id="pain">
-                <option>セットが決まらない</option>
-                <option>似合う髪型がわからない</option>
-                <option>うねり・ボリューム</option>
-                <option>朝の時短</option>
-                <option>校則・職場の規定</option>
-                <option selected>薄毛・生え際</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>感情トーン</label>
-              <select id="tone">
-                <option>挑発</option><option selected>共感</option><option>権威</option><option>禁止</option><option>感動</option>
-              </select>
-            </div>
-            <div>
-              <label>CTA（行動）</label>
-              <select id="cta">
-                <option selected>予約する</option>
-                <option>保存する</option>
-                <option>DMする</option>
-                <option>いいねする</option>
-                <option>コメントする</option>
-                <option>フォローする</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row-3 row">
-            <div>
-              <label>地域・店名（初期値）</label>
-              <input id="brand" type="text" value="福井市・SANDGATE サンドゲート" />
-            </div>
-            <div>
-              <label>予約URL（任意）</label>
-              <input id="bookUrl" type="url" placeholder="https://sand-gate.jp/reserve" />
-              <div class="inline">
-                <label class="toggle"><input id="autoUrl" type="checkbox" checked /> CTAに予約URLを自動付与</label>
-              </div>
-            </div>
-            <div>
-              <label>出力長さ（上限）</label>
-              <select id="length">
-                <option value="0" selected>フリー（制限なし）</option>
-                <option value="30">約30文字</option>
-                <option value="60">約60文字</option>
-                <option value="90">約90文字</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>固定ハッシュタグ（編集可・カンマ区切り）</label>
-              <input id="fixedTags" type="text" value="#福井メンズ美容室, #SANDGATE, #サンドゲート" />
-              <div class="note">※ 先頭に # がなくても自動で付与。ブラウザに保存されます。</div>
-            </div>
-            <div>
-              <label>追加ハッシュタグ（自動記憶・カンマ区切り）</label>
-              <input id="extraTags" type="text" placeholder="例：#フェードスタイル, #スキンフェード" />
-              <div class="inline">
-                <label class="toggle"><input id="autoTag" type="checkbox" checked /> 自動タグ（地域/フェード/汎用）を付与</label>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>縦長サムネ文言（長さ）</label>
-              <select id="thumbLen">
-                <option value="8">極短（〜8字）</option>
-                <option value="12" selected>短め（〜12字）</option>
-                <option value="16">やや長め（〜16字）</option>
-              </select>
-            </div>
-            <div>
-              <label>追加キーワード（本文に自然挿入／カンマ区切り）</label>
-              <input id="keywords" type="text" value="清潔感, 第一印象, フェード" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label class="toggle"><input id="useGpt" type="checkbox" /> GPTで生成する</label>
-            </div>
-            <div>
-              <label>GPT APIエンドポイント（Vercel）</label>
-              <input id="gptEndpoint" type="url" placeholder="https://your-app.vercel.app/api/generate" />
-              <div class="note">社内向け：このURLは一度入力すればブラウザに保存されます。</div>
-            </div>
-          </div>
-
-          <div class="chips" id="patterns"></div>
-
-          <div class="btns">
-            <button class="btn primary" id="gen">生成する</button>
-            <button class="btn ghost" id="shuffle">シャッフル</button>
-            <button class="btn danger" id="clear">クリア</button>
-          </div>
-          <div class="note">カードの「コピー」で本文、サムネ行は個別にコピーできます。</div>
+    <!-- ========== 設定パネル ========== -->
+    <section class="panel">
+      <div class="grid">
+        <div class="col-6">
+          <label>ターゲット</label>
+          <input id="target" type="text" placeholder="例：20代社会人／30代営業職／受験生 など">
         </div>
-      </section>
-
-      <section class="panel">
-        <div class="panel-inner">
-          <div class="toolbar">
-            <div class="left"><span class="badge">RESULT</span><span class="small">スワイプファイル＋サムネ文言</span></div>
-            <div class="right"><button class="btn ok" id="copyAll">全部コピー</button></div>
-          </div>
-          <div id="results" class="result-grid" aria-live="polite"></div>
+        <div class="col-6">
+          <label>悩み / 制約</label>
+          <input id="pain" type="text" placeholder="例：薄毛・生え際／直毛でボリュームが出ない／校則・会社規定 など">
         </div>
-      </section>
-    </div>
-  </main>
 
-  <footer class="wrap small">© 2025 SANDGATE Swipe File Generator｜固定悩みセレクト・編集可能タグ・フォローCTA・GPT接続</footer>
+        <div class="col-4">
+          <label>トーン</label>
+          <select id="tone">
+            <option>共感</option>
+            <option>専門的</option>
+            <option>勢い</option>
+            <option>上品</option>
+            <option>ユーモア</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <label>CTA（行動）</label>
+          <select id="cta">
+            <option>予約する</option>
+            <option>フォローする</option>
+            <option>相談する</option>
+            <option>保存する</option>
+            <option>共有する</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <label>予約URL（任意）</label>
+          <input id="bookUrl" type="url" placeholder="https://...">
+        </div>
+
+        <div class="col-6">
+          <label>ブランド（店名・地域）</label>
+          <input id="brand" type="text" value="福井市・SANDGATE サンドゲート">
+          <div class="hint">投稿文に自然に挿入されます。自由に編集可。</div>
+        </div>
+
+        <div class="col-3">
+          <label>生成件数</label>
+          <input id="count" type="number" min="1" max="20" value="10">
+        </div>
+        <div class="col-3">
+          <label>本文 文字数上限（0=指定なし）</label>
+          <input id="lengthLimit" type="number" min="0" max="180" value="100">
+        </div>
+
+        <div class="col-12">
+          <label>固定ハッシュタグ（常に付与）</label>
+          <input id="fixedTags" type="text"
+                 value="#福井メンズ美容室 #SANDGATE #サンドゲート">
+          <div class="hint">半角スペース区切り。例：#福井メンズ美容室 #SANDGATE #サンドゲート</div>
+        </div>
+
+        <div class="col-12">
+          <label>追加ハッシュタグ（任意／前回値を自動復元）</label>
+          <input id="extraTags" type="text"
+                 placeholder="#フェード #スキンフェード #福井市 #メンズカット #フェードスタイル">
+          <div class="hint">半角スペース区切り。例：#フェード #スキンフェード #福井市 #メンズカット #フェードスタイル</div>
+        </div>
+
+        <div class="col-12 btn-row">
+          <button class="btn" id="btnGen">GPTで生成</button>
+          <button class="btn secondary" id="btnSave">現在の設定を保存</button>
+          <button class="btn ghost" id="btnClear">結果クリア</button>
+          <span class="hint" id="status"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 結果 ========== -->
+    <section class="panel">
+      <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px">
+        <h2 style="margin:0;font-size:18px">生成結果</h2>
+        <div class="btn-row">
+          <button class="btn secondary" id="btnCopyAll">すべてコピー（本文）</button>
+          <button class="btn secondary" id="btnExport">CSVダウンロード</button>
+        </div>
+      </div>
+      <div id="cards" class="cards"></div>
+    </section>
+
+    <footer>© SANDGATE. Built with GPT-4o-mini.</footer>
+  </div>
 
 <script>
-(function(){
-  const $ = (q)=>document.querySelector(q);
-  const results = $('#results');
-  const target=$('#target'), tone=$('#tone'), cta=$('#cta');
-  const brand=$('#brand'), keywords=$('#keywords'), bookUrl=$('#bookUrl'), autoUrl=$('#autoUrl'), lengthSel=$('#length');
-  const thumbLenSel=$('#thumbLen'), autoTag=$('#autoTag');
-  const fixedTagsInput=$('#fixedTags'), extraTags=$('#extraTags');
-  const painSel=$('#pain');
-  const btnGen=$('#gen'), btnClear=$('#clear'), btnShuffle=$('#shuffle'), btnCopyAll=$('#copyAll');
-  const chipsWrap=$('#patterns');
-  const useGpt=$('#useGpt'), gptEndpoint=$('#gptEndpoint');
+/* ====== 設定 ====== */
+const API_ENDPOINT = "https://sandgate-gpt-api.vercel.app/api/generate";
+const LS_KEY = "sandgate_hooks_config_v1";
 
-  const LS = {
-    fixedTags: 'sg_fixed_tags',
-    extraTags: 'sg_extra_tags',
-    brand: 'sg_brand',
-    bookUrl: 'sg_bookurl',
-    gptEndpoint: 'sg_gpt_endpoint',
-    useGpt: 'sg_use_gpt'
+/* ====== ユーティリティ ====== */
+const $ = (s)=>document.querySelector(s);
+const statusEl = $("#status");
+
+function toast(msg){
+  statusEl.textContent = msg;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>statusEl.textContent="", 4000);
+}
+function getForm(){
+  return {
+    target: $("#target").value.trim(),
+    pain: $("#pain").value.trim(),
+    tone: $("#tone").value,
+    cta: $("#cta").value,
+    brand: $("#brand").value.trim(),
+    bookUrl: $("#bookUrl").value.trim(),
+    fixedTags: $("#fixedTags").value.trim().split(/\s+/).filter(Boolean),
+    extraTags: $("#extraTags").value.trim().split(/\s+/).filter(Boolean),
+    count: Math.max(1, Math.min(20, parseInt($("#count").value || "10", 10))),
+    lengthLimit: Math.max(0, Math.min(200, parseInt($("#lengthLimit").value || "0", 10))),
   };
+}
+function setForm(cfg){
+  $("#target").value = cfg.target ?? "";
+  $("#pain").value = cfg.pain ?? "";
+  $("#tone").value = cfg.tone ?? "共感";
+  $("#cta").value = cfg.cta ?? "予約する";
+  $("#brand").value = cfg.brand ?? "福井市・SANDGATE サンドゲート";
+  $("#bookUrl").value = cfg.bookUrl ?? "";
+  $("#fixedTags").value = (cfg.fixedTags ?? ["#福井メンズ美容室","#SANDGATE","#サンドゲート"]).join(" ");
+  $("#extraTags").value = (cfg.extraTags ?? []).join(" ");
+  $("#count").value = cfg.count ?? 10;
+  $("#lengthLimit").value = cfg.lengthLimit ?? 100;
+}
+function saveConfig(){
+  const cfg = getForm();
+  localStorage.setItem(LS_KEY, JSON.stringify(cfg));
+  toast("設定を保存しました");
+}
+function loadConfig(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){ setForm(JSON.parse(raw)); toast("前回の設定を復元しました"); }
+    else { setForm({}); }
+  }catch{ setForm({}); }
+}
 
-  const rand = (arr)=>arr[Math.floor(Math.random()*arr.length)];
-  const toArray = (s)=> (s||"").split(",").map(t=>t.trim()).filter(Boolean);
-  const ensureHash = (t)=> t.startsWith("#") ? t : ("#"+t.replace(/^#+/,""));
+/* ====== コピー/CSV ====== */
+function copy(text){
+  navigator.clipboard.writeText(text).then(()=>toast("コピーしました"));
+}
+function exportCSV(items){
+  const rows = [["thumb","body"]];
+  items.forEach(i=>rows.push([i.thumb.replace(/"/g,'""'), i.body.replace(/"/g,'""')]));
+  const csv = rows.map(r=>`"${r[0]}","${r[1]}"`).join("\n");
+  const blob = new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "sandgate_hooks.csv"; a.click();
+  URL.revokeObjectURL(url);
+}
 
-  function loadPersisted(){
-    const fixed = localStorage.getItem(LS.fixedTags);
-    if(fixed){ fixedTagsInput.value = fixed; }
-    const ext = localStorage.getItem(LS.extraTags);
-    if(ext){ extraTags.value = ext; }
-    const b = localStorage.getItem(LS.brand); if(b) brand.value = b;
-    const u = localStorage.getItem(LS.bookUrl); if(u) bookUrl.value = u;
-    const ep = localStorage.getItem(LS.gptEndpoint); if(ep) gptEndpoint.value = ep;
-    const ug = localStorage.getItem(LS.useGpt); if(ug){ useGpt.checked = ug === '1'; }
+/* ====== レンダリング ====== */
+function render(items){
+  const wrap = $("#cards");
+  wrap.innerHTML = "";
+  items.forEach((it,idx)=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h3>${escapeHtml(it.thumb || `サムネ ${idx+1}`)}</h3>
+      <p>${escapeHtml(it.body || "")}</p>
+      <div class="tools">
+        <button class="btn secondary" data-act="copyBody">本文コピー</button>
+        <button class="btn secondary" data-act="copyThumb">サムネ文言コピー</button>
+      </div>
+    `;
+    card.querySelector('[data-act="copyBody"]').onclick = ()=>copy(it.body || "");
+    card.querySelector('[data-act="copyThumb"]').onclick = ()=>copy(it.thumb || "");
+    wrap.appendChild(card);
+  });
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]))}
+
+/* ====== GPT 生成 ====== */
+async function generate(){
+  const payload = getForm();
+  $("#btnGen").disabled = true;
+  $("#btnGen").textContent = "生成中…";
+  toast("GPTに送信中…");
+
+  // 本文に固定＋追加タグを付けるのはフロント側で最終合成してもOK
+  const res = await fetch(API_ENDPOINT, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(payload)
+  }).catch(e=>({ ok:false, statusText:String(e) }));
+
+  $("#btnGen").disabled = false;
+  $("#btnGen").textContent = "GPTで生成";
+
+  if(!res || !res.ok){
+    toast("エラー: " + (res?.statusText || "ネットワーク"));
+    return;
   }
+  const data = await res.json();
 
-  fixedTagsInput.addEventListener("change", ()=> localStorage.setItem(LS.fixedTags, fixedTagsInput.value));
-  extraTags.addEventListener("change", ()=> localStorage.setItem(LS.extraTags, extraTags.value));
-  brand.addEventListener("change", ()=> localStorage.setItem(LS.brand, brand.value));
-  bookUrl.addEventListener("change", ()=> localStorage.setItem(LS.bookUrl, bookUrl.value));
-  gptEndpoint.addEventListener("change", ()=> localStorage.setItem(LS.gptEndpoint, gptEndpoint.value));
-  useGpt.addEventListener("change", ()=> localStorage.setItem(LS.useGpt, useGpt.checked ? '1' : '0'));
+  // 最終タグ付与 & 予約URL挿入
+  const fixed = payload.fixedTags.join(" ");
+  const extra = payload.extraTags.join(" ");
+  const tagLine = [fixed, extra].filter(Boolean).join(" ");
+  const items = (data.items || []).map(raw=>{
+    const body = (raw.body || "").trim()
+      + (payload.bookUrl ? `\n→ ${payload.bookUrl}` : "")
+      + (tagLine ? `\n${tagLine}` : "");
+    return { body, thumb: raw.thumb || "清潔感、正義" };
+  });
 
-  const CTA = {
-    "予約する":["今すぐ予約","カットはここから","席が埋まる前に予約"],
-    "保存する":["あとで見返せるよう保存","保存して次回オーダー","保存→担当に見せて"],
-    "DMする":["DMで相談","匿名で相談OK","希望をDMで送って"],
-    "いいねする":["いいねで応援","参考になったら👍","続編希望はいいね"],
-    "コメントする":["悩みをコメント","どっち派かコメントで","質問はコメントで"],
-    "フォローする":["フォローして続編を見る","最新投稿を見逃さないようフォロー","フェード好きはフォロー"]
-  };
+  render(items);
+  // 最新結果を保存（次回CSV/コピーしやすいように）
+  window._lastItems = items;
+  toast(`生成完了：${items.length}件`);
+}
 
-  const VISUAL = ["（数秒の静止）","【先に謝ります】","＼写真は同一人物／","▼ ここだけの話","※ 注意：見たら戻れません"];
-  const LOCAL_TAGS = ["#福井","#福井市","#福井市美容室","#福井理容室"];
-  const FADE_TAGS  = ["#フェードスタイル","#フェードカット","#スキンフェード","#ミッドフェード","#ローフェード","#ハイフェード","#バーバースタイル","#メンズカット","#メンズヘア"];
-  const GENERAL_TAGS=["#清潔感","#第一印象","#就活ヘア","#ビジネスヘア","#大人男子","#メンズセット"];
+/* ====== イベント ====== */
+$("#btnGen").addEventListener("click", generate);
+$("#btnSave").addEventListener("click", saveConfig);
+$("#btnClear").addEventListener("click", ()=>{ $("#cards").innerHTML=""; toast("結果をクリアしました"); });
+$("#btnCopyAll").addEventListener("click", ()=>{
+  const items = window._lastItems || [];
+  if(!items.length) return toast("コピー対象がありません");
+  copy(items.map(i=>`${i.thumb}\n${i.body}`).join("\n\n---\n\n"));
+});
+$("#btnExport").addEventListener("click", ()=>{
+  const items = window._lastItems || [];
+  if(!items.length) return toast("エクスポート対象がありません");
+  exportCSV(items);
+});
 
-  const PATTERNS = [
-    { id:"共感×逆転",  text:({t,p,b,k})=>`「美容室で“いつも通りで”って言ったら、いつも通りじゃなかった話。」\n${t}の${p}に刺さる、${b}の実例で解説。${k}` },
-    { id:"秘密暴露",    text:({t,p,b,k})=>`実は「${t}がモテる髪型」には3つの共通点がある。\n最後に${b?b+'での':""}ベストオーダー例を公開。${k}` },
-    { id:"失敗→解決",  text:({t,p,b,k})=>`昔の自分へ：${p}の原因、これでした。\n今日から3つだけ真似して。${b?b+'でも即できる。':""}${k?'\n'+k:''}` },
-    { id:"禁止ワード",  text:({t,p,b,k})=>`この髪型だけは選ばないで。見た目が一気に老ける。\n${t}の${p}タイプは要注意。${k}` },
-    { id:"承認×変身",  text:({t,p,b,k})=>`「清潔感ない」って言われた俺が、2ヶ月で「爽やかすぎ」と言われた理由。\n${t}の${p}でも再現可。${k}` },
-    { id:"日常ギャップ",text:({t,p,b,k})=>`職場では普通、デートでは「雰囲気変わったね」。\n${t}向け${p}対策の二刀流ヘア。${k}` },
-    { id:"挑発×命令",  text:({t,p,b,k})=>`「セット苦手」って言う前に、これ見てから言って。\n${t}の${p}はこの1分で解決。${k}` },
-    { id:"比較×驚き",  text:({t,p,b,k})=>`同一人物、髪型だけで第一印象が激変。\n${t}の${p}向けに${b?b+'実績の':""}ビフォーアフター公開。${k}` },
-    { id:"データ×権威",text:({t,p,b,k})=>`第一印象で見られてるのは◯◯％「髪」。\n${t}の${p}ほど差が出る。${k}` },
-    { id:"感情×沈黙",  text:({t,p,b,k})=>`${VISUAL[Math.floor(Math.random()*VISUAL.length)]}\n別れた理由、今ならわかる。髪だった。\n${t}の${p}は今日から変えよう。${k}` },
-  ];
-
-  const TONE = {
-    "挑発": (s)=> s.replace("見てから言って","黙って真似して").replace("要注意","今すぐやめて"),
-    "共感": (s)=> "正直に言うと、" + s.replace("これでした。","これが多かったです。"),
-    "権威": (s)=> "プロの結論：" + s.replace("公開。","公開します。").replace("要注意。","注意が必要です。"),
-    "禁止": (s)=> s.replace("選ばないで","絶対に選ばないで").replace("やめよう。","やめてください。"),
-    "感動": (s)=> s.replace("昔の自分へ：","あの日の自分へ。").replace("激変。","劇的に変わる。")
-  };
-
-  function parseFixedTags(){
-    return (document.querySelector('#fixedTags').value || '')
-      .split(',').map(s=>s.trim()).filter(Boolean)
-      .map(t=> t.startsWith('#') ? t : '#'+t.replace(/^#+/,'') );
-  }
-  function injectKeywords(text,kws){
-    if(!kws.length) return text;
-    const tag = " #" + kws.slice(0,3).map(x=>x.replace(/\s+/g,'')).join(" #");
-    const lines = text.split("\n");
-    if(lines.length>1) lines[1] = lines[1] + " " + tag; else text += " " + tag;
-    return lines.join("\n");
-  }
-  function attachURL(text){
-    const url = bookUrl.value.trim();
-    if(!url || !autoUrl.checked) return text;
-    const lines = text.split("\n");
-    let placed=false;
-    for(let i=lines.length-1;i>=0;i--){
-      if(/予約|DM|保存|コメント|いいね|フォロー/.test(lines[i])){
-        lines[i] = lines[i] + " → " + url;
-        placed = true; break;
-      }
-    }
-    if(!placed) lines.push("予約はこちら → " + url);
-    return lines.join("\n");
-  }
-  function pickTags(){
-    const FIXED = parseFixedTags();
-    const ext = (extraTags?.value || '').split(',').map(s=>s.trim()).filter(Boolean).map(t=> t.startsWith('#') ? t : '#'+t.replace(/^#+/,'') );
-    const LOCAL_TAGS = ["#福井","#福井市","#福井市美容室","#福井理容室"];
-    const FADE_TAGS  = ["#フェードスタイル","#フェードカット","#スキンフェード","#ミッドフェード","#ローフェード","#ハイフェード","#バーバースタイル","#メンズカット","#メンズヘア"];
-    const GENERAL_TAGS=["#清潔感","#第一印象","#就活ヘア","#ビジネスヘア","#大人男子","#メンズセット"];
-    const rand = (arr)=>arr[Math.floor(Math.random()*arr.length)];
-    const smart = [rand(LOCAL_TAGS), rand(FADE_TAGS), rand(FADE_TAGS), rand(GENERAL_TAGS)].filter(Boolean);
-    const uniq = Array.from(new Set([...FIXED, ...smart, ...ext]));
-    return uniq.join(" ");
-  }
-  function attachTags(text){
-    if(!autoTag.checked) return text;
-    const tags = pickTags();
-    return text + "\n" + tags;
-  }
-  function limitLength(text, limit){
-    if(!limit || limit<=0) return text;
-    if(text.length <= limit) return text;
-    const cut = text.slice(0, limit - 1);
-    const lastBreak = Math.max(cut.lastIndexOf("。"), cut.lastIndexOf("\n"), cut.lastIndexOf("！"), cut.lastIndexOf("？"));
-    const finalText = (lastBreak>10 ? cut.slice(0,lastBreak) : cut) + "…";
-    return finalText;
-  }
-  function makeThumb(patternId, ctx, maxChars){
-    const basePool = [
-      "清潔感、正義","その髪、損してる","第一印象は髪","1分で激変","似合うは作れる",
-      "清潔感を、刈る","仕事勝てる髪","即・爽やか","大人の正解ヘア","就活は前髪から"
-    ];
-    const fadePool = ["フェードで清潔感","スキンフェード","最短で垢抜け","横顔が武器","輪郭、締まる","勝てる刈り上げ"];
-    let pool = basePool;
-    if(/フェード|薄毛|生え際/.test(ctx.p) || /SANDGATE|福井/.test(ctx.b)) pool = pool.concat(fadePool);
-    const pick = pool[Math.floor(Math.random()*pool.length)];
-    const lim = Math.max(4, parseInt(maxChars||12,10));
-    let out = pick;
-    if(out.length>lim) out = out.slice(0, lim-1) + "…";
-    return out;
-  }
-
-  const selected = new Set(PATTERNS.map(p=>p.id));
-  function renderChips(){
-    chipsWrap.innerHTML="";
-    PATTERNS.forEach(p=>{
-      const c=document.createElement("div");
-      c.className="chip active"; c.textContent=p.id; c.dataset.id=p.id;
-      c.addEventListener("click", ()=>{
-        if(selected.has(p.id)){ selected.delete(p.id); c.classList.remove("active"); }
-        else { selected.add(p.id); c.classList.add("active"); }
-      });
-      chipsWrap.appendChild(c);
-    });
-  }
-  renderChips();
-
-  function makeOne(p){
-    const ctx = { t: target.value, p: painSel.value, b: brand.value, k: (function(){const c=CTA[cta.value]||["今すぐ行動"];return c[Math.floor(Math.random()*c.length)];})() };
-    let txt = p.text(ctx);
-    const T = TONE[tone.value]; if(T) txt = T(txt);
-    txt = injectKeywords(txt, (keywords.value || '').split(',').map(s=>s.trim()).filter(Boolean));
-    txt = attachURL(txt);
-    txt = attachTags(txt);
-    const lim = parseInt(lengthSel.value,10); txt = limitLength(txt, lim);
-    const thumb = makeThumb(p.id, ctx, parseInt(thumbLenSel.value,10));
-    return { id:p.id, text:txt, thumb };
-  }
-
-  function renderCards(items){
-    results.innerHTML="";
-    items.forEach((it, idx)=>{
-      const card=document.createElement("div"); card.className="card";
-      const meta=document.createElement("div"); meta.className="meta";
-      meta.innerHTML = `<span>${idx+1}</span><span>パターン：${it.id}</span><span class="thumb">サムネ候補：<strong>${it.thumb}</strong></span>`;
-      const p=document.createElement("p"); p.textContent=it.text;
-      const line=document.createElement("div"); line.style.display="flex"; line.style.gap="8px"; line.style.marginTop="8px"; line.style.flexWrap="wrap";
-      const b1=document.createElement("button"); b1.className="copy"; b1.textContent="本文をコピー";
-      const b2=document.createElement("button"); b2.className="copy"; b2.textContent="サムネをコピー";
-      b1.addEventListener("click", async ()=>{ await navigator.clipboard.writeText(it.text); b1.textContent="✓ コピーしました"; setTimeout(()=>b1.textContent="本文をコピー",1200); });
-      b2.addEventListener("click", async ()=>{ await navigator.clipboard.writeText(it.thumb); b2.textContent="✓ コピーしました"; setTimeout(()=>b2.textContent="サムネをコピー",1200); });
-      line.appendChild(b1); line.appendChild(b2);
-      card.appendChild(meta); card.appendChild(p); card.appendChild(line);
-      results.appendChild(card);
-    });
-  }
-
-  async function generateWithGPT(payload){
-    const endpoint = gptEndpoint.value.trim();
-    if(!endpoint) throw new Error('GPTエンドポイント未設定');
-    const r = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if(!r.ok) throw new Error('APIエラー: ' + r.status);
-    return await r.json(); // { items: [ { body, thumb }, ... ] }
-  }
-
-  async function generate(){
-    const pats = PATTERNS.filter(p=>selected.has(p.id));
-    if(!pats.length){ alert("少なくとも1つのパターンを選択してください。"); return; }
-
-    const payload = {
-      target: target.value,
-      pain: painSel.value,
-      tone: tone.value,
-      cta: cta.value,
-      brand: brand.value,
-      bookUrl: bookUrl.value.trim() || null,
-      fixedTags: parseFixedTags(),
-      extraTags: (extraTags?.value || '').split(',').map(s=>s.trim()).filter(Boolean),
-      lengthLimit: parseInt(lengthSel.value,10) || 0,
-      count: 10
-    };
-
-    try {
-      if(useGpt.checked){
-        const { items } = await generateWithGPT(payload);
-        const out = (items || []).map((it, i)=> ({
-          id: 'GPT-'+(i+1),
-          text: it.body,
-          thumb: it.thumb || '清潔感、正義'
-        }));
-        if(out.length){ renderCards(out); return; }
-      }
-    } catch (e){
-      console.warn('GPT生成に失敗 → ローカル生成へフォールバック', e);
-      alert('GPT生成に失敗しました。ローカル生成で続行します。');
-    }
-
-    let out=[]; while(out.length<10){ out.push(makeOne(pats[Math.floor(Math.random()*pats.length)])); }
-    renderCards(out);
-  }
-
-  function init(){
-    loadPersisted();
-    btnGen.addEventListener("click", generate);
-    btnShuffle.addEventListener("click", generate);
-    btnClear.addEventListener("click", ()=>{ results.innerHTML=""; });
-    btnCopyAll.addEventListener("click", async ()=>{
-      const texts=[...results.querySelectorAll(".card p")].map(p=>p.textContent.trim()).filter(Boolean);
-      if(!texts.length) return;
-      await navigator.clipboard.writeText(texts.join("\n\n"));
-      btnCopyAll.textContent="✓ 全部コピーしました"; setTimeout(()=>btnCopyAll.textContent="全部コピー",1500);
-    });
-    // 初回はローカルで10本生成
-    generate();
-  }
-
-  window.addEventListener('DOMContentLoaded', init);
-})();</script>
+/* 初期化 */
+loadConfig();
+</script>
 </body>
 </html>
